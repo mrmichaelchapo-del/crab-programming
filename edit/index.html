@@ -49,4 +49,45 @@
   <button class="dc-topbar__btn">Preview</button>
   <button class="dc-topbar__btn dc-topbar__btn--primary">Save</button>
 </div>
+<style>
+  .dc-canvas-wrap {
+    font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    width: 100%; height: 100%; overflow: auto; padding: 1.25rem;
+    background:
+      radial-gradient(#dde5ee 1px, transparent 1px) 0 0 / 18px 18px,
+      #f4f6fa;
+  }
+  .dc-canvas-wrap * { box-sizing: border-box; }
+  .dc-canvas {
+    min-height: 100%; border-radius: 14px; background: #fff;
+    border: 1px solid #e2e8f0; padding: 1rem;
+    display: grid; grid-template-columns: repeat(12, 1fr);
+    grid-auto-rows: 84px; gap: .65rem;
+    box-shadow: 0 10px 25px -18px rgba(15, 40, 70, .25);
+  }
+  .dc-canvas--empty {
+    display: flex; align-items: center; justify-content: center;
+    border: 2px dashed #cfddee; background: #fbfdff; box-shadow: none;
+  }
+  .dc-canvas__empty { text-align: center; max-width: 300px; pointer-events: none; }
+  .dc-canvas__empty-icon {
+    width: 46px; height: 46px; margin: 0 auto .7rem;
+    border-radius: 14px; background: #eef4fc; color: #3b7cbf;
+    display: grid; place-items: center; font-size: 1.2rem;
+  }
+  .dc-canvas__empty-title { font-size: .9rem; font-weight: 600; color: #17324e; margin-bottom: .2rem; }
+  .dc-canvas__empty-text  { font-size: .78rem; color: #7b8fa5; line-height: 1.5; }
+</style>
+
+<div class="dc-canvas-wrap">
+  <div class="dc-canvas dc-canvas--empty">
+    <div class="dc-canvas__empty">
+      <div class="dc-canvas__empty-icon">✥</div>
+      <div class="dc-canvas__empty-title">Your canvas is empty</div>
+      <div class="dc-canvas__empty-text">
+        Drag a block from the left to start building your dashboard.
+      </div>
+    </div>
+  </div>
+</div>
 </body>
