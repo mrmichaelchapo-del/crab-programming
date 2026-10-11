@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+  <meta charset="UTF-8">
+  <title>Crab Programming</title>
+   <style>
+  .dc-topbar {
+    font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    display: flex; align-items: center; gap: .6rem;
+    padding: 0 1rem; height: 52px;
+    background: #fff; border-bottom: 1px solid #e2e8f0;
+  }
+  .dc-topbar * { box-sizing: border-box; }
+  .dc-topbar__logo {
+    font-weight: 700; font-size: .9rem; color: #0a1e2f;
+    display: flex; align-items: center; gap: .5rem; margin-right: .5rem;
+  }
+  .dc-topbar__logo::before {
+    content: ""; width: 20px; height: 20px; border-radius: 6px;
+    background: linear-gradient(135deg, #3b7cbf, #1d4b7c);
+  }
+  .dc-topbar__spacer { flex: 1; }
+  .dc-topbar__icon-btn {
+    width: 32px; height: 32px; border-radius: 8px;
+    border: 1px solid transparent; background: transparent;
+    color: #445a72; cursor: pointer; display: grid; place-items: center;
+    font-size: .9rem; transition: .15s;
+  }
+  .dc-topbar__icon-btn:hover { background: #eef2f7; border-color: #e2e8f0; color: #0b1c2e; }
+  .dc-topbar__icon-btn--active { background: #e5eef9; border-color: #c5d9ee; color: #1d4b7c; }
+  .dc-topbar__divider { width: 1px; height: 20px; background: #e2e8f0; margin: 0 .3rem; }
+  .dc-topbar__btn {
+    border: 1px solid #cfddee; background: #fff; color: #1e3a5f;
+    padding: .45rem .9rem; border-radius: 8px; font-size: .8rem;
+    font-weight: 500; cursor: pointer; transition: .15s;
+  }
+  .dc-topbar__btn:hover { background: #eef4fc; border-color: #98b9e0; }
+  .dc-topbar__btn--primary { background: #1d4b7c; border-color: #1d4b7c; color: #fff; }
+  .dc-topbar__btn--primary:hover { background: #0f3557; border-color: #0f3557; }
+</style>
+</head>
+<body>
+<div class="dc-topbar">
+  <div class="dc-topbar__logo">Dashboard Studio</div>
+  <button class="dc-topbar__icon-btn" title="Undo">↶</button>
+  <button class="dc-topbar__icon-btn" title="Redo">↷</button>
+  <div class="dc-topbar__divider"></div>
+  <button class="dc-topbar__icon-btn dc-topbar__icon-btn--active" title="Select">▣</button>
+  <button class="dc-topbar__icon-btn" title="Grid">▦</button>
+  <div class="dc-topbar__spacer"></div>
+  <button class="dc-topbar__btn">Preview</button>
+  <button class="dc-topbar__btn dc-topbar__btn--primary">Save</button>
+</div>
+<style>
+  .dc-canvas-wrap {
+    font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    width: 100%; height: 100%; overflow: auto; padding: 1.25rem;
+    background:
+      radial-gradient(#dde5ee 1px, transparent 1px) 0 0 / 18px 18px,
+      #f4f6fa;
+  }
+  .dc-canvas-wrap * { box-sizing: border-box; }
+  .dc-canvas {
+    min-height: 100%; border-radius: 14px; background: #fff;
+    border: 1px solid #e2e8f0; padding: 1rem;
+    display: grid; grid-template-columns: repeat(12, 1fr);
+    grid-auto-rows: 84px; gap: .65rem;
+    box-shadow: 0 10px 25px -18px rgba(15, 40, 70, .25);
+  }
+  .dc-canvas--empty {
+    display: flex; align-items: center; justify-content: center;
+    border: 2px dashed #cfddee; background: #fbfdff; box-shadow: none;
+  }
+  .dc-canvas__empty { text-align: center; max-width: 300px; pointer-events: none; }
+  .dc-canvas__empty-icon {
+    width: 46px; height: 46px; margin: 0 auto .7rem;
+    border-radius: 14px; background: #eef4fc; color: #3b7cbf;
+    display: grid; place-items: center; font-size: 1.2rem;
+  }
+  .dc-canvas__empty-title { font-size: .9rem; font-weight: 600; color: #17324e; margin-bottom: .2rem; }
+  .dc-canvas__empty-text  { font-size: .78rem; color: #7b8fa5; line-height: 1.5; }
+</style>
+
+<div class="dc-canvas-wrap">
+  <div class="dc-canvas dc-canvas--empty">
+    <div class="dc-canvas__empty">
+      <div class="dc-canvas__empty-icon">🫙</div>
+      <div class="dc-canvas__empty-title">Your canvas is empty</div>
+      <div class="dc-canvas__empty-text">
+        Drag a block from the left to start building your dashboard.
+      </div>
+    </div>
+  </div>
+</div>
+<style>
+  .dc-inspector {
+    font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    width: 260px; height: 100%;
+    background: #fff; border-left: 1px solid #e2e8f0;
+    padding: .9rem; overflow-y: auto;
+    display: flex; flex-direction: column; gap: 1.1rem;
+  }
+  .dc-inspector * { box-sizing: border-box; }
+  .dc-inspector__field { display: flex; flex-direction: column; gap: .3rem; }
+  .dc-inspector__label { font-size: .7rem; font-weight: 600; color: #445a72; }
+  .dc-inspector__input,
+  .dc-inspector__select {
+    width: 100%; padding: .45rem .6rem;
+    border: 1px solid #dbe5f0; border-radius: 8px;
+    background: #fbfdff; font-size: .8rem; color: #17324e;
+    font-family: inherit; transition: .15s;
+  }
+  .dc-inspector__input:focus,
+  .dc-inspector__select:focus {
+    outline: none; border-color: #3b7cbf; background: #fff;
+    box-shadow: 0 0 0 3px rgba(59, 124, 191, .12);
+  }
+  .dc-inspector__row { display: grid; grid-template-columns: 1fr 1fr; gap: .5rem; }
+  .dc-inspector__toggle-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: .3rem 0; font-size: .78rem; color: #17324e;
+  }
+  .dc-inspector__switch {
+    position: relative; width: 32px; height: 18px;
+    border-radius: 999px; background: #cfddee; cursor: pointer;
+    transition: .15s; flex-shrink: 0;
+  }
+  .dc-inspector__switch::after {
+    content: ""; position: absolute; top: 2px; left: 2px;
+    width: 14px; height: 14px; border-radius: 50%; background: #fff;
+    transition: .15s; box-shadow: 0 1px 2px rgba(0,0,0,.15);
+  }
+  .dc-inspector__switch--on { background: #3b7cbf; }
+  .dc-inspector__switch--on::after { left: 16px; }
+  .dc-inspector__empty {
+    margin: auto; text-align: center; color: #8a9eb0;
+    font-size: .78rem; line-height: 1.5; padding: 1rem;
+  }
+</style>
+
+<aside class="dc-inspector">
+  <div class="dc-inspector__empty">
+    Select a block on the canvas<br>to edit its properties.
+  </div>
+</aside>
+<style>
+  .dc-widget {
+    font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    background: #fff; border: 1px solid #dfe9f2; border-radius: 12px;
+    padding: .85rem; display: flex; flex-direction: column;
+    position: relative; transition: .15s;
+    box-shadow: 0 4px 10px -8px rgba(20, 45, 80, .2);
+  }
+  .dc-widget * { box-sizing: border-box; }
+  .dc-widget:hover {
+    border-color: #b9d2eb;
+    box-shadow: 0 8px 18px -10px rgba(29, 75, 124, .25);
+  }
+  .dc-widget--selected {
+    border-color: #3b7cbf;
+    box-shadow: 0 0 0 3px rgba(59, 124, 191, .15);
+  }
+  .dc-widget__head {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    gap: .5rem; margin-bottom: .5rem;
+  }
+  .dc-widget__title {
+    font-size: .78rem; font-weight: 600; color: #2c577e;
+    text-transform: uppercase; letter-spacing: .03em;
+  }
+  .dc-widget__actions { display: flex; gap: 2px; opacity: 0; transition: .15s; }
+  .dc-widget:hover .dc-widget__actions { opacity: 1; }
+  .dc-widget__action {
+    width: 22px; height: 22px; border: none; background: transparent;
+    border-radius: 6px; color: #8a9eb0; cursor: pointer;
+    display: grid; place-items: center; font-size: .75rem;
+  }
+  .dc-widget__action:hover { background: #eef2f7; color: #17324e; }
+  .dc-widget__action--danger:hover { background: #ffe6e5; color: #c2332b; }
+  .dc-widget__body {
+    flex: 1; border-radius: 8px; background: #f7fafd;
+    display: grid; place-items: center; color: #8a9eb0; font-size: .75rem;
+  }
+</style>
+
+<div class="dc-widget">
+  <div class="dc-widget__head">
+    <span class="dc-widget__title">Line Chart</span>
+    <div class="dc-widget__actions">
+      <button class="dc-widget__action" title="Duplicate">⎘</button>
+      <button class="dc-widget__action dc-widget__action--danger" title="Delete">×</button>
+    </div>
+  </div>
+  <div class="dc-widget__body">Widget preview</div>
+</div>
+
+<section id="code">
+<button id="copy">📋 Copy</button>
+<script src="copying.js">
+
+<input type="text" placeholder="Type your code here...">
+<link rel="stylesheet" href="s.css">
+</section>
+</body>
+</html>
