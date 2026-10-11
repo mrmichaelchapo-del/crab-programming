@@ -141,4 +141,54 @@
     Select a block on the canvas<br>to edit its properties.
   </div>
 </aside>
+<style>
+  .dc-widget {
+    font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    background: #fff; border: 1px solid #dfe9f2; border-radius: 12px;
+    padding: .85rem; display: flex; flex-direction: column;
+    position: relative; transition: .15s;
+    box-shadow: 0 4px 10px -8px rgba(20, 45, 80, .2);
+  }
+  .dc-widget * { box-sizing: border-box; }
+  .dc-widget:hover {
+    border-color: #b9d2eb;
+    box-shadow: 0 8px 18px -10px rgba(29, 75, 124, .25);
+  }
+  .dc-widget--selected {
+    border-color: #3b7cbf;
+    box-shadow: 0 0 0 3px rgba(59, 124, 191, .15);
+  }
+  .dc-widget__head {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    gap: .5rem; margin-bottom: .5rem;
+  }
+  .dc-widget__title {
+    font-size: .78rem; font-weight: 600; color: #2c577e;
+    text-transform: uppercase; letter-spacing: .03em;
+  }
+  .dc-widget__actions { display: flex; gap: 2px; opacity: 0; transition: .15s; }
+  .dc-widget:hover .dc-widget__actions { opacity: 1; }
+  .dc-widget__action {
+    width: 22px; height: 22px; border: none; background: transparent;
+    border-radius: 6px; color: #8a9eb0; cursor: pointer;
+    display: grid; place-items: center; font-size: .75rem;
+  }
+  .dc-widget__action:hover { background: #eef2f7; color: #17324e; }
+  .dc-widget__action--danger:hover { background: #ffe6e5; color: #c2332b; }
+  .dc-widget__body {
+    flex: 1; border-radius: 8px; background: #f7fafd;
+    display: grid; place-items: center; color: #8a9eb0; font-size: .75rem;
+  }
+</style>
+
+<div class="dc-widget">
+  <div class="dc-widget__head">
+    <span class="dc-widget__title">Line Chart</span>
+    <div class="dc-widget__actions">
+      <button class="dc-widget__action" title="Duplicate">⎘</button>
+      <button class="dc-widget__action dc-widget__action--danger" title="Delete">×</button>
+    </div>
+  </div>
+  <div class="dc-widget__body">Widget preview</div>
+</div>
 </body>
