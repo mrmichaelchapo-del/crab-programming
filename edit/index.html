@@ -3,6 +3,456 @@
   <head>
     <meta charset="utf-8">
     <title>Crab Programming</title>
+
+    <style>
+    /* ============================================
+   Dashboard Creator — builder UI (CSS only)
+   Scoped under .dc-*
+   ============================================ */
+
+.dc-root,
+.dc-root * { box-sizing: border-box; margin: 0; padding: 0; }
+
+.dc-root {
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  display: grid;
+  grid-template-columns: 260px 1fr 280px;
+  grid-template-rows: 56px 1fr;
+  grid-template-areas:
+    "topbar topbar topbar"
+    "left   canvas right";
+  width: 100%;
+  height: 100%;
+  min-height: 560px;
+  background: #f4f6fa;
+  color: #0b1c2e;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+/* ---------- top toolbar ---------- */
+.dc-topbar {
+  grid-area: topbar;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0 1rem;
+  background: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.dc-logo {
+  font-weight: 700;
+  font-size: 0.95rem;
+  letter-spacing: -0.01em;
+  color: #0a1e2f;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-right: 0.5rem;
+}
+
+.dc-logo::before {
+  content: "";
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  background: linear-gradient(135deg, #3b7cbf, #1d4b7c);
+}
+
+.dc-topbar__group {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.dc-topbar__spacer { flex: 1; }
+
+.dc-icon-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: #445a72;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  font-size: 0.95rem;
+  transition: 0.15s;
+}
+
+.dc-icon-btn:hover {
+  background: #eef2f7;
+  border-color: #e2e8f0;
+  color: #0b1c2e;
+}
+
+.dc-icon-btn--active {
+  background: #e5eef9;
+  border-color: #c5d9ee;
+  color: #1d4b7c;
+}
+
+.dc-divider {
+  width: 1px;
+  height: 22px;
+  background: #e2e8f0;
+  margin: 0 0.35rem;
+}
+
+/* ---------- left: blocks palette ---------- */
+.dc-palette {
+  grid-area: left;
+  background: #ffffff;
+  border-right: 1px solid #e2e8f0;
+  padding: 1rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.dc-section__title {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #7b8fa5;
+  margin-bottom: 0.6rem;
+}
+
+.dc-block-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.dc-block {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.6rem 0.7rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  background: #fbfcfe;
+  cursor: grab;
+  transition: 0.15s;
+  user-select: none;
+}
+
+.dc-block:hover {
+  border-color: #b9d2eb;
+  background: #f2f7fd;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px -4px rgba(29, 75, 124, 0.15);
+}
+
+.dc-block:active { cursor: grabbing; }
+
+.dc-block__icon {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  background: #e5eef9;
+  color: #1d4b7c;
+  font-size: 0.85rem;
+  flex-shrink: 0;
+}
+
+.dc-block__icon--green { background: #e2f4ea; color: #1f7a4d; }
+.dc-block__icon--amber { background: #fdf1dd; color: #b06f14; }
+.dc-block__icon--violet { background: #ece5fb; color: #5b3fbf; }
+
+.dc-block__meta { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+
+.dc-block__name {
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: #17324e;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dc-block__hint {
+  font-size: 0.68rem;
+  color: #8a9eb0;
+}
+
+/* ---------- center: canvas ---------- */
+.dc-canvas-wrap {
+  grid-area: canvas;
+  overflow: auto;
+  padding: 1.5rem;
+  background:
+    radial-gradient(#dde5ee 1px, transparent 1px) 0 0 / 18px 18px,
+    #f4f6fa;
+}
+
+.dc-canvas {
+  min-height: 100%;
+  border-radius: 14px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 10px 25px -18px rgba(15, 40, 70, 0.25);
+  padding: 1.25rem;
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  grid-auto-rows: 84px;
+  gap: 0.75rem;
+}
+
+/* empty state — shown when canvas has no widgets */
+.dc-canvas--empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px dashed #cfddee;
+  background: #fbfdff;
+  box-shadow: none;
+}
+
+.dc-empty {
+  text-align: center;
+  max-width: 320px;
+  pointer-events: none;
+}
+
+.dc-empty__icon {
+  width: 48px;
+  height: 48px;
+  margin: 0 auto 0.75rem;
+  border-radius: 14px;
+  background: #eef4fc;
+  color: #3b7cbf;
+  display: grid;
+  place-items: center;
+  font-size: 1.3rem;
+}
+
+.dc-empty__title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #17324e;
+  margin-bottom: 0.25rem;
+}
+
+.dc-empty__text {
+  font-size: 0.8rem;
+  color: #7b8fa5;
+  line-height: 1.5;
+}
+
+/* grid slots (drop targets on the canvas) */
+.dc-slot {
+  border: 1px dashed #dbe5f0;
+  border-radius: 10px;
+  transition: 0.15s;
+}
+
+.dc-slot:hover {
+  border-color: #b9d2eb;
+  background: rgba(185, 210, 235, 0.08);
+}
+
+/* ---------- canvas widgets ---------- */
+.dc-widget {
+  background: #ffffff;
+  border: 1px solid #dfe9f2;
+  border-radius: 12px;
+  padding: 0.85rem;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  transition: 0.15s;
+  box-shadow: 0 4px 10px -8px rgba(20, 45, 80, 0.2);
+}
+
+.dc-widget:hover {
+  border-color: #b9d2eb;
+  box-shadow: 0 8px 18px -10px rgba(29, 75, 124, 0.25);
+}
+
+.dc-widget--selected {
+  border-color: #3b7cbf;
+  box-shadow: 0 0 0 3px rgba(59, 124, 191, 0.15);
+}
+
+.dc-widget__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.dc-widget__title {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #2c577e;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.dc-widget__actions {
+  display: flex;
+  gap: 2px;
+  opacity: 0;
+  transition: 0.15s;
+}
+
+.dc-widget:hover .dc-widget__actions { opacity: 1; }
+
+.dc-widget__action {
+  width: 22px;
+  height: 22px;
+  border: none;
+  background: transparent;
+  border-radius: 6px;
+  color: #8a9eb0;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  font-size: 0.75rem;
+}
+
+.dc-widget__action:hover { background: #eef2f7; color: #17324e; }
+.dc-widget__action--danger:hover { background: #ffe6e5; color: #c2332b; }
+
+.dc-widget__body {
+  flex: 1;
+  border-radius: 8px;
+  background: #f7fafd;
+  display: grid;
+  place-items: center;
+  color: #8a9eb0;
+  font-size: 0.75rem;
+}
+
+/* ---------- right: properties panel ---------- */
+.dc-inspector {
+  grid-area: right;
+  background: #ffffff;
+  border-left: 1px solid #e2e8f0;
+  padding: 1rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.dc-field { display: flex; flex-direction: column; gap: 0.35rem; }
+
+.dc-field__label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #445a72;
+  letter-spacing: 0.02em;
+}
+
+.dc-input,
+.dc-select {
+  width: 100%;
+  padding: 0.5rem 0.65rem;
+  border: 1px solid #dbe5f0;
+  border-radius: 8px;
+  background: #fbfdff;
+  font-size: 0.82rem;
+  color: #17324e;
+  font-family: inherit;
+  transition: 0.15s;
+}
+
+.dc-input:focus,
+.dc-select:focus {
+  outline: none;
+  border-color: #3b7cbf;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(59, 124, 191, 0.12);
+}
+
+.dc-field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+
+.dc-toggle-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.4rem 0;
+  font-size: 0.8rem;
+  color: #17324e;
+}
+
+.dc-switch {
+  position: relative;
+  width: 32px;
+  height: 18px;
+  border-radius: 999px;
+  background: #cfddee;
+  cursor: pointer;
+  transition: 0.15s;
+  flex-shrink: 0;
+}
+
+.dc-switch::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #ffffff;
+  transition: 0.15s;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+}
+
+.dc-switch--on { background: #3b7cbf; }
+.dc-switch--on::after { left: 16px; }
+
+.dc-inspector__empty {
+  margin: auto;
+  text-align: center;
+  color: #8a9eb0;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  padding: 1rem;
+}
+
+/* ---------- scrollbars (subtle) ---------- */
+.dc-palette::-webkit-scrollbar,
+.dc-inspector::-webkit-scrollbar,
+.dc-canvas-wrap::-webkit-scrollbar { width: 8px; }
+
+.dc-palette::-webkit-scrollbar-thumb,
+.dc-inspector::-webkit-scrollbar-thumb,
+.dc-canvas-wrap::-webkit-scrollbar-thumb {
+  background: #dbe5f0;
+  border-radius: 999px;
+}
+
+.dc-palette::-webkit-scrollbar-thumb:hover,
+.dc-inspector::-webkit-scrollbar-thumb:hover,
+.dc-canvas-wrap::-webkit-scrollbar-thumb:hover { background: #b9d2eb; }
+
+/* ---------- responsive ---------- */
+@media (max-width: 900px) {
+  .dc-root {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "topbar"
+      "canvas"
+      "left"
+      "right";
+    height: auto;
+  }
+  .dc-palette,
+  .dc-inspector { border: none; border-top: 1px solid #e2e8f0; }
+}
+</style>
    </head>
   <body>
    <button id="download">Download Project</button>
